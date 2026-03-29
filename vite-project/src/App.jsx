@@ -1,3 +1,4 @@
+const BASE_URL = 'https://talkify-backend-lyart.vercel.app'
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 
@@ -430,7 +431,7 @@ function App() {
     }
 
     try {
-      await postApi('/api/auth/signup', {
+      await postApi('https://talkify-backend-lyart.vercel.app/signup', {
         firstName,
         lastName,
         username: cleanUsername,
@@ -471,7 +472,7 @@ function App() {
     }
 
     try {
-      await postApi('/api/auth/login', {
+      await postApi('https://talkify-backend-lyart.vercel.app/login', {
         phone,
         password: authForm.password,
       })
