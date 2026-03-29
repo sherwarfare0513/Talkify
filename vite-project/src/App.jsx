@@ -4,7 +4,7 @@ import './App.css'
 const SESSION_KEY = 'connectarena-session'
 const DEV_SHORTCUT = 'Ctrl + Shift + D'
 const moods = ['Building', 'Available', 'Focused', 'Gaming']
-const DEPLOYED_API_BASE_URL = 'https://talkify-nine-eosin.vercel.app'
+const DEPLOYED_API_BASE_URL = 'https://talkify-backend-sand.vercel.app'
 const isLocalHost =
   typeof window !== 'undefined' &&
   ['localhost', '127.0.0.1'].includes(window.location.hostname)

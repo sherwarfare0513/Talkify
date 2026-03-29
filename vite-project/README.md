@@ -2,7 +2,7 @@
 
 Frontend: `https://incandescent-unicorn-bb3930.netlify.app`
 
-Backend: `https://talkify-nine-eosin.vercel.app`
+Backend: `https://talkify-backend-sand.vercel.app`
 
 ## Local development
 
@@ -16,7 +16,7 @@ Backend: `https://talkify-nine-eosin.vercel.app`
 
 - Netlify build command: `npm run build`
 - Netlify publish directory: `dist`
-- Netlify environment variable: `VITE_API_BASE_URL=https://talkify-nine-eosin.vercel.app`
+- Netlify environment variable: `VITE_API_BASE_URL=https://talkify-backend-sand.vercel.app`
 - Vercel environment variable: `CORS_ORIGIN=https://incandescent-unicorn-bb3930.netlify.app,http://localhost:5173,http://127.0.0.1:5173`
 
 ## Notes
