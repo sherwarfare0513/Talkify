@@ -146,7 +146,7 @@ function App() {
 
     const loadState = async () => {
       try {
-        const response = await fetch('/api/state')
+        const response = await fetch('https://talkify-backend-lyart.vercel.app/state');
         const data = await response.json()
         if (!active) return
         setAppState(normalizeState({ ...data, currentUserId: sessionUserId || null }))

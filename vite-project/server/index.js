@@ -477,5 +477,5 @@ const server = http.createServer(async (req, res) => {
 })
 
 server.listen(port, () => {
-  console.log(`ConnectArena server running on http://localhost:${port}`)
+  console.log(`ConnectArena server running on http://talkify-backend-lyart.vercel.app`)
 })
