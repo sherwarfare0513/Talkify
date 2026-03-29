@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node scripts/dev.mjs",
+    "dev": "vite",
     "dev:client": "vite",
+    "dev:full": "node scripts/dev.mjs",
     "server": "node server/index.js",
     "build": "vite build",
     "lint": "eslint .",

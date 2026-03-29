@@ -1,10 +1,17 @@
-const BASE_URL = 'https://talkify-backend-lyart.vercel.app'
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 
 const SESSION_KEY = 'connectarena-session'
 const DEV_SHORTCUT = 'Ctrl + Shift + D'
 const moods = ['Building', 'Available', 'Focused', 'Gaming']
+const DEPLOYED_API_BASE_URL = 'https://talkify-nine-eosin.vercel.app'
+const isLocalHost =
+  typeof window !== 'undefined' &&
+  ['localhost', '127.0.0.1'].includes(window.location.hostname)
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ||
+  (isLocalHost ? '' : DEPLOYED_API_BASE_URL)
+).replace(/\/$/, '')
 
 const emptyState = {
   currentUserId: null,
@@ -81,6 +88,22 @@ const fieldRequirements = {
   username: ['Starts with lowercase letter', '3-20 characters', 'Only letters, numbers, dot, underscore'],
 }
 
+function getApiUrl(path) {
+  if (/^https?:\/\//.test(path)) return path
+  return `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`
+}
+
+async function parseApiResponse(response) {
+  const text = await response.text()
+  if (!text) return {}
+
+  try {
+    return JSON.parse(text)
+  } catch {
+    throw new Error('Server response samajh nahin aayi.')
+  }
+}
+
 function App() {
   const [appState, setAppState] = useState(emptyState)
   const [sessionUserId, setSessionUserId] = useState(() => localStorage.getItem(SESSION_KEY) || '')
@@ -147,13 +170,17 @@ function App() {
 
     const loadState = async () => {
       try {
-        const response = await fetch('https://talkify-backend-lyart.vercel.app/state');
-        const data = await response.json()
+        const response = await fetch(getApiUrl('/api/state'))
+        const data = await parseApiResponse(response)
+        if (!response.ok) {
+          throw new Error(data.error || 'State load nahin ho saki.')
+        }
         if (!active) return
         setAppState(normalizeState({ ...data, currentUserId: sessionUserId || null }))
-      } catch {
+        setAuthError('')
+      } catch (error) {
         if (!active) return
-        setAuthError('Server se connection nahin ban raha. Pehle backend start karein.')
+        setAuthError(error.message || 'Server se connection nahin ban raha. Pehle backend start karein.')
       } finally {
         if (active) {
           setLoading(false)
@@ -266,12 +293,12 @@ function App() {
   }
 
   const postApi = async (path, body) => {
-    const response = await fetch(path, {
+    const response = await fetch(getApiUrl(path), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     })
-    const data = await response.json()
+    const data = await parseApiResponse(response)
     if (!response.ok) {
       throw new Error(data.error || 'Request failed.')
     }
@@ -308,16 +335,6 @@ function App() {
       setFieldValid((prev) => ({ ...prev, lastName: isValidName(value) }))
     } else if (name === 'username') {
       setFieldValid((prev) => ({ ...prev, username: isValidUsername(value.trim().toLowerCase()) }))
-    }
-  }
-
-  const handleAuthBlur = (event) => {
-    const { name } = event.target
-    if (name in authTouched) {
-      setAuthTouched((current) => ({
-        ...current,
-        [name]: true,
-      }))
     }
   }
 
@@ -431,7 +448,7 @@ function App() {
     }
 
     try {
-      await postApi('https://talkify-backend-lyart.vercel.app/signup', {
+      await postApi('/api/auth/signup', {
         firstName,
         lastName,
         username: cleanUsername,
@@ -472,7 +489,7 @@ function App() {
     }
 
     try {
-      await postApi('https://talkify-backend-lyart.vercel.app/login', {
+      await postApi('/api/auth/login', {
         phone,
         password: authForm.password,
       })
@@ -556,13 +573,6 @@ function App() {
   const playRpsRound = async (roomId, move) => {
     if (!currentUser) return
     await postApi('/api/game-room/rps', { roomId, userId: currentUser.id, move })
-  }
-
-  const passwordChecks = {
-    length: authForm.password.length >= 8,
-    firstUpper: /^[A-Z]/.test(authForm.password),
-    hasNumber: /\d/.test(authForm.password),
-    hasSpecial: /[^A-Za-z0-9]/.test(authForm.password),
   }
 
   if (loading) {
